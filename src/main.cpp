@@ -5,15 +5,14 @@ using namespace std;
 
 	pros::Controller master (CONTROLLER_MASTER);
 
-	pros::Motor left1 (1, MOTOR_GEARSET_18, MOTOR_ENCODER_DEGREES);
-	pros::Motor left2 (2, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES); 
-	pros::Motor left3 (3, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES); 
-	pros::Motor right1 (9, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES); 
-	pros::Motor right2 (10, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);
-	pros::Motor right3 (12, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);  
+	pros::Motor left1 (1, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::Motor left2 (2, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees); 
+	pros::Motor left3 (3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees); 
+	pros::Motor right1 (9, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees); 
+	pros::Motor right2 (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::Motor right3 (12, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);  
 
-	pros::Motor intake (7, MOTOR_GEARSET_36, false, MOTOR_ENCODER_DEGREES);
-
+	pros::Motor intake (7, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	bitset<1> intakeState(0);
 
 	/*
