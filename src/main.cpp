@@ -5,22 +5,26 @@ using namespace std;
 
 	pros::Controller master (CONTROLLER_MASTER);
 
-	pros::Motor left1 (1, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-	pros::Motor left2 (2, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees); 
-	pros::Motor left3 (3, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees); 
-	pros::Motor right1 (9, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees); 
-	pros::Motor right2 (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-	pros::Motor right3 (12, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);  
 
-	pros::Motor intake (7, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup lefter ({1, 2, 3}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup righter ({9, 10, 12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	
+
+	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+
 	bitset<1> intakeState(0);
 
 	/*
-		0th value: motor running
+		0th value: motors running
+		1st value: piston state
 	*/
 
-double averageMotorVoltage(){
-	double x = (abs(left1.get_voltage()) + abs(left2.get_voltage()) + abs(right1.get_voltage()) + abs(right2.get_voltage()))/4;
+double averageMotorVoltage(pros::MotorGroup motors){
+	double x;
+	int motorCount = motors.get_port_all().size();
+	std::int32_t voltage;
+	voltage = motors.get_voltage();
+	x = voltage/motorCount;
 	return x;
 }
 
@@ -32,16 +36,12 @@ void drive (double distance, double speed ) {
 
 		pros::delay(2);
 
-		double baseMotorVoltager = averageMotorVoltage();
+		double baseMotorVoltager = averageMotorVoltage(lefter);
 
-		left1.move_relative(-degreesTurned, speed);
-		left2.move_relative(-degreesTurned, speed);
-		left3.move_relative(-degreesTurned, speed);
+		lefter.move_relative(-degreesTurned, speed);
 
-		right1.move_relative(degreesTurned, speed);
-		right2.move_relative(degreesTurned, speed);	
-		right3.move_relative(degreesTurned, speed);	
-
+		righter.move_relative(degreesTurned, speed);
+		
 		pros::delay(100);
 
 	while (1) {
@@ -59,13 +59,9 @@ void turn (double robot_degrees, double speed, int negatation) {
 
 	double baseMotorVoltager = averageMotorVoltage();
 
-	left1.move_relative(motor_degrees, speed);
-	left2.move_relative(motor_degrees, speed);
-	left3.move_relative(motor_degrees, speed);
+	lefter.move_relative(motor_degrees, speed);
 
-	right1.move_relative(motor_degrees, speed);
-	right2.move_relative(motor_degrees, speed);
-	right3.move_relative(motor_degrees, speed);
+	righter.move_relative(motor_degrees, speed);
 
 	pros::delay(100);
 
@@ -177,13 +173,10 @@ void opcontrol() {
 		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
 		
 
-		left1.move(leftControl);
-		left2.move(leftControl);
-		left3.move(leftControl);
+		lefter.move(leftControl);
 
-		right1.move(rightControl);
-		right2.move(rightControl);
-		right3.move(rightControl);
+		righter.move(rightControl);
+
 
 		pros::delay(2);
 
