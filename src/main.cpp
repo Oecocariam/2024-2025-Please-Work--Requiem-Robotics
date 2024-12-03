@@ -3,6 +3,7 @@
 using namespace std; 
 
 
+
 	pros::Controller master (CONTROLLER_MASTER);
 
 
@@ -12,8 +13,13 @@ using namespace std;
 
 	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
+	pros::ADIDigitalOut pistonIntake ('A');
+	pros::ADIDigitalOut pistonCapture ('B');
+
 	bitset<1> intakeState(0);
 
+	bool capture = false;
+	
 	/*
 		0th value: motors running
 		1st value: piston state
@@ -102,14 +108,8 @@ void initialize() {
 	pros::lcd::set_text(1, "Hello PROS User!");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+	intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
 
-//	wingLeft.set_brake_mode(MOTOR_BRAKE_HOLD);
-//	wingRight.set_brake_mode(MOTOR_BRAKE_HOLD);
-//	launcher.set_brake_mode(MOTOR_BRAKE_COAST);
-
-//	wingLeft.move_absolute(-40, 200);
-//	pros::delay(200);
-//	wingLeft.brake();
 }
 
 /**
@@ -178,7 +178,7 @@ void opcontrol() {
 		lefter.move(leftControl);
 
 		righter.move(rightControl);
-
+		
 
 		pros::delay(2);
 
@@ -191,16 +191,19 @@ void opcontrol() {
 					
 					case 1:
 
-						intake.brake();
+						
+						intake.move_absolute(90, 200);
+						pistonIntake.set_value(false);
+						intake.move_relative(-10, 50);
 						intakeState.reset(1);
-
 						break;
 
 					case 0:
 
-						intake.move_absolute(90, 200);
-						intakeState.set(1);
-
+						intake.brake();
+						pistonIntake.set_value(true);
+						pros::delay(100);
+						intakeState.set(1);	
 						break;
 				}
 
@@ -210,126 +213,24 @@ void opcontrol() {
 
 				break;
 		}
+
+		switch(master.get_digital(DIGITAL_B)){
+			case true:
+				pistonCapture.set_value(!capture);
+				capture = !capture;
+				break;
+
+			case false:
+
+				break;
+		}
 			
-
-//later use bit integer to simplify process
-/*
-		switch(master.get_digital(DIGITAL_R1)){
-
-			case true:
-
-			switch(rightWingState == 1){
-
-				case true:
-
-					wingRight.move_absolute(90, 200);
-
-					rightWingState = -1;
-
-					pros::delay(200);
-
-				break;
-
-				case false:
-
-					wingRight.move_absolute(0, 200);
-
-					rightWingState = 1;
-
-					pros::delay(200);
-
-				break;
-
-			wingRight.brake();
-
-			break;
-			}
-		}
-
-
-
-
 		switch(master.get_digital(DIGITAL_L1)){
-
 			case true:
-
-			switch(leftWingState == 1){
-
-				case true:
-
-					wingLeft.move_absolute(140, 200);
-
-					leftWingState = -1;
-
-					pros::delay(200);
-
+				intake.move_voltage(6000);
 				break;
-
-				case false:
-
-					wingLeft.move_absolute(-20, 200);
-
-					leftWingState = 1;
-
-					pros::delay(200);
-
+			case false:
 				break;
-
-			wingLeft.brake();
-
-			break;
-
-			default:
-
-				wingLeft.brake();
-
-				break;
-			}
 		}
-/*
-		switch(master.get_digital(DIGITAL_A)) {
-
-			case true:
-
-			switch((rightWingState || leftWingState) == -1){
-
-				case true:
-
-
-					wingRight.move_absolute(0, 200);
-					wingLeft.move_absolute(0, 200);
-					
-					leftWingState = 1;
-					rightWingState = 1;
-
-					pros::delay(200);
-
-				break;
-
-				case false:
-
-					wingRight.move_absolute(90, 200);
-					wingLeft.move_absolute(90, 200);
-
-					leftWingState = -1;
-					rightWingState = -1;
-
-					pros::delay(200);
-
-				break;
-
-			};
-				wingLeft.brake();
-				wingRight.brake();
-
-				break;
-
-				case false:
-
-					break;
-				
-
-		}
-		*/
 	}
 }
