@@ -19,12 +19,14 @@ using namespace std;
 		1st value: piston state
 	*/
 
-double averageMotorVoltage(pros::MotorGroup motors){
+double averageMotorVoltage(pros::MotorGroup& motors){
 	double x;
 	int motorCount = motors.get_port_all().size();
 	std::int32_t voltage;
+
 	voltage = motors.get_voltage();
 	x = voltage/motorCount;
+	
 	return x;
 }
 
@@ -36,7 +38,7 @@ void drive (double distance, double speed ) {
 
 		pros::delay(2);
 
-		double baseMotorVoltager = averageMotorVoltage(lefter);
+		double baseMotorVoltager = (averageMotorVoltage(lefter)+averageMotorVoltage(righter))/2;
 
 		lefter.move_relative(-degreesTurned, speed);
 
@@ -47,7 +49,7 @@ void drive (double distance, double speed ) {
 	while (1) {
     	pros::delay(2);
 
-		if(averageMotorVoltage()<=baseMotorVoltager+1000){
+		if(((averageMotorVoltage(lefter)+averageMotorVoltage(righter))/2)<=baseMotorVoltager+1000){
 			break;
 		}
 	}
@@ -57,7 +59,7 @@ void turn (double robot_degrees, double speed, int negatation) {
 
 	double motor_degrees = (robot_degrees/0.1361)-(7.667*negatation);
 
-	double baseMotorVoltager = averageMotorVoltage();
+	double baseMotorVoltager = (averageMotorVoltage(lefter)+averageMotorVoltage(righter))/2;
 
 	lefter.move_relative(motor_degrees, speed);
 
@@ -67,7 +69,7 @@ void turn (double robot_degrees, double speed, int negatation) {
 
 	while (1) {
 
-		if(averageMotorVoltage()<=baseMotorVoltager+1000){
+		if(((averageMotorVoltage(lefter)+averageMotorVoltage(righter))/2)<=baseMotorVoltager+1000){
 			break;
 		}
 	}
@@ -180,25 +182,24 @@ void opcontrol() {
 
 		pros::delay(2);
 
-
 		//control of intake
 
 		switch(master.get_digital(DIGITAL_A)){
 			case true:
 			
-				switch(intakeState.test(0)){
+				switch(intakeState.test(1)){
 					
 					case 1:
 
 						intake.brake();
-						intakeState.reset(0);
+						intakeState.reset(1);
 
 						break;
 
 					case 0:
 
-						intake.move(127);
-						intakeState.set(0);
+						intake.move_absolute(90, 200);
+						intakeState.set(1);
 
 						break;
 				}
