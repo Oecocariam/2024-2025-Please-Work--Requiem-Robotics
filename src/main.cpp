@@ -187,6 +187,7 @@ void opcontrol() {
 						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
 
 						intakeState.reset(1);
+						pros::delay(10);
 						break;
 
 					case 0:
@@ -226,22 +227,26 @@ void opcontrol() {
 
 						intake.brake();
 						intakeState.reset(0);	
+						pros::delay(10);
 						break;
 
 					case 00:
 
 						intake.move_voltage(6000);
 						intakeState.set(0);	
+						pros::delay(10);
 						break;
 
 					case 01:
 
 						intake.move_relative(1, 200);
 						intakeState.set(0);	
+						pros::delay(10);
 						break;
 
 					case 11:
-
+						
+						pros::delay(10);
 						break;
 
 				}
