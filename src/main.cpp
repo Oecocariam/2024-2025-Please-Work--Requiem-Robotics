@@ -18,7 +18,7 @@ using namespace std;
 	pros::ADIDigitalOut pistonIntake ('A');
 	pros::ADIDigitalOut pistonCapture ('B');
 
-	bitset<1> intakeState(0);
+	bitset<1> intakeState(00);
 	/*
 		0th value: motors running
 		1st value: Brake state
@@ -173,7 +173,7 @@ void opcontrol() {
 		pros::lcd::initialize();
 		Braker.brake();
 	while (true) {
-		
+
 		int leftControl = (master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
 		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
 		
