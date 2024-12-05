@@ -13,7 +13,7 @@ using namespace std;
 
 	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
-	pros::Motor Braker(9, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::Motor Braker(6, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
 	pros::ADIDigitalOut pistonIntake ('A');
 	pros::ADIDigitalOut pistonCapture ('B');
