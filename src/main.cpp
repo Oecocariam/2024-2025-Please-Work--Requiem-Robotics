@@ -13,17 +13,20 @@ using namespace std;
 
 	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
+	pros::Motor Braker(9, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+
 	pros::ADIDigitalOut pistonIntake ('A');
 	pros::ADIDigitalOut pistonCapture ('B');
 
 	bitset<1> intakeState(0);
+	/*
+		0th value: motors running
+		1st value: Brake state
+	*/
 
 	bool capture = false;
 	
-	/*
-		0th value: motors running
-		1st value: piston state
-	*/
+
 
 double averageMotorVoltage(pros::MotorGroup& motors){
 	double x;
@@ -109,7 +112,8 @@ void initialize() {
 
 	pros::lcd::register_btn1_cb(on_center_button);
 	intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-
+	Braker.brake();
+	Braker.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
 /**
@@ -142,7 +146,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-
+	Braker.brake();
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -167,20 +171,9 @@ void opcontrol() {
 //	definition of piston, controller , and motors
 
 		pros::lcd::initialize();
-
+		Braker.brake();
 	while (true) {
-		
 
-		int leftControl = (master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
-		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
-		
-
-		lefter.move(leftControl);
-
-		righter.move(rightControl);
-		
-
-		pros::delay(2);
 
 		//control of intake
 
@@ -191,18 +184,17 @@ void opcontrol() {
 					
 					case 1:
 
-						
-						intake.move_absolute(90, 200);
-						pistonIntake.set_value(false);
-						intake.move_relative(-10, 50);
+						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
+
 						intakeState.reset(1);
 						break;
 
 					case 0:
 
+						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 						intake.brake();
-						pistonIntake.set_value(true);
-						pros::delay(100);
+						pros::delay(10);
+						intakeState.reset(0);
 						intakeState.set(1);	
 						break;
 				}
@@ -227,8 +219,32 @@ void opcontrol() {
 			
 		switch(master.get_digital(DIGITAL_L1)){
 			case true:
-				intake.move_voltage(6000);
-				break;
+
+				switch((10*intakeState.test(0))+(intakeState.test(1))){
+
+					case 10:
+
+						intake.brake();
+						intakeState.reset(0);	
+						break;
+
+					case 00:
+
+						intake.move_voltage(6000);
+						intakeState.set(0);	
+						break;
+
+					case 01:
+
+						intake.move_relative(1, 200);
+						intakeState.set(0);	
+						break;
+
+					case 11:
+
+						break;
+
+				}
 			case false:
 				break;
 		}
