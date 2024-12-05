@@ -7,8 +7,8 @@ using namespace std;
 	pros::Controller master (CONTROLLER_MASTER);
 
 
-	pros::MotorGroup lefter ({1, 2, 3}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-	pros::MotorGroup righter ({9, 10, 12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup lefter ({1, 2,}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup righter ({11, 12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	
 
 	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
