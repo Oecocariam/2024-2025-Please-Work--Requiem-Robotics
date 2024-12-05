@@ -173,7 +173,17 @@ void opcontrol() {
 		pros::lcd::initialize();
 		Braker.brake();
 	while (true) {
+		
+		int leftControl = (master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
+		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
+		
 
+		lefter.move(leftControl);
+
+		righter.move(rightControl);
+		
+
+		pros::delay(2);
 
 		//control of intake
 
