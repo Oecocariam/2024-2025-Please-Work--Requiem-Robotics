@@ -8,7 +8,7 @@ using namespace std;
 
 
 	pros::MotorGroup lefter ({1, 2,}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-	pros::MotorGroup righter ({11, 12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup righter ({11, -12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	
 
 	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
@@ -18,7 +18,7 @@ using namespace std;
 	pros::ADIDigitalOut pistonIntake ('A');
 	pros::ADIDigitalOut pistonCapture ('B');
 
-	bitset<1> intakeState(00);
+	string intakeState("00");
 	/*
 		0th value: motors running
 		1st value: Brake state
@@ -190,13 +190,13 @@ void opcontrol() {
 		switch(master.get_digital(DIGITAL_A)){
 			case true:
 			
-				switch(intakeState.test(1)){
+				switch(intakeState[1]){
 					
 					case 1:
 
 						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
 
-						intakeState.reset(1);
+						intakeState.replace(1, 1, 1, '0');
 						pros::delay(10);
 						break;
 
@@ -205,8 +205,8 @@ void opcontrol() {
 						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 						intake.brake();
 						pros::delay(10);
-						intakeState.reset(0);
-						intakeState.set(1);	
+						intakeState.replace(0, 1, 1, '0');
+						intakeState.replace(1, 1, 1, '1');	
 						break;
 				}
 
@@ -231,26 +231,26 @@ void opcontrol() {
 		switch(master.get_digital(DIGITAL_L1)){
 			case true:
 
-				switch((10*intakeState.test(0))+(intakeState.test(1))){
+				switch(int((10*intakeState[0])+(intakeState[1]))){
 
 					case 10:
 
 						intake.brake();
-						intakeState.reset(0);	
+						intakeState.replace(0, 1, 1, '0');	
 						pros::delay(10);
 						break;
 
 					case 00:
 
 						intake.move_voltage(6000);
-						intakeState.set(0);	
+						intakeState.replace(0, 1, 1, '1');	
 						pros::delay(10);
 						break;
 
 					case 01:
 
 						intake.move_relative(1, 200);
-						intakeState.set(0);	
+						intakeState.replace(0, 1, 1, '1');		
 						pros::delay(10);
 						break;
 
