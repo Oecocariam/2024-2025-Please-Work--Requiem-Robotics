@@ -1,5 +1,6 @@
 #include "main.h"
 #include <bitset>
+#include <iostream>
 using namespace std; 
 
 
@@ -165,7 +166,7 @@ void autonomous() {
 
 void opcontrol() {
 
-
+	
 
 	
 //	definition of piston, controller , and motors
@@ -173,6 +174,9 @@ void opcontrol() {
 		pros::lcd::initialize();
 		Braker.brake();
 	while (true) {
+
+
+		cout << intakeState;
 
 		int leftControl = (master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
 		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
@@ -190,7 +194,7 @@ void opcontrol() {
 		switch(master.get_digital(DIGITAL_A)){
 			case true:
 			
-				switch(intakeState[1]){
+				switch(int(intakeState[1])){
 					
 					case 1:
 
