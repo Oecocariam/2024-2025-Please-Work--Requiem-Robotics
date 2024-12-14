@@ -22,7 +22,7 @@ using namespace std;
 	string intakeState("00");
 	/*
 		0th value: motors running
-		1st value: Brake state
+		1st value: swing state
 	*/
 
 	bool capture = false;
@@ -173,6 +173,7 @@ void opcontrol() {
 
 		pros::lcd::initialize();
 		Braker.brake();
+		Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 	while (true) {
 
 		pros::lcd::clear_line(1);
@@ -249,7 +250,7 @@ void opcontrol() {
 
 					case 100*int('0')+ int('1'):
 
-						intake.move_relative(10, 200);
+						Braker.move_relative(10, 200);
 						intakeState.replace(0, 1, 1, '1');		
 						pros::delay(5);
 						break;
@@ -265,16 +266,77 @@ void opcontrol() {
 				}
 			}
 
+
 		if(master.get_digital(DIGITAL_R1)){
 
 				switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
 
+					case 100*int('0')+ int('1'):
+
+						Braker.move_relative(10, 200);
+						intakeState.replace(0, 1, 1, '1');		
+						pros::delay(5);
+						break;
+
+					case 100*int('1')+ int('1'):
+						
+						pros::delay(10);
+						break;
+
+					default:
+						break;
 					
 
-				}
+			}
+
+		}
+
+		if(master.get_digital(DIGITAL_UP)){
+			
+			switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
+
+					case 100*int('0')+ int('0'):
+
+						intake.move_relative(10, 200);
+						intakeState.replace(0, 1, 1, '1');		
+						pros::delay(5);
+						break;
+
+					case 100*int('1')+ int('0'):
+						
+						pros::delay(10);
+						break;
+
+					default:
+						break;
 
 			}
-				
+
+		}
+
+		if(master.get_digital(DIGITAL_DOWN)){
+			
+			switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
+
+					case 100*int('0')+ int('0'):
+
+						intake.move_relative(10, 200);
+						intakeState.replace(0, 1, 1, '1');		
+						pros::delay(5);
+						break;
+
+					case 100*int('1')+ int('0'):
+						
+						pros::delay(10);
+						break;
+
+					default:
+						break;
+
+			}
+
+		}
+
+	}		
 		
-	}
 }
