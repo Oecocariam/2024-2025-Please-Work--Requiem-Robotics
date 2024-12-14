@@ -109,7 +109,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	
 
 	pros::lcd::register_btn1_cb(on_center_button);
 	intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
@@ -175,8 +175,9 @@ void opcontrol() {
 		Braker.brake();
 	while (true) {
 
+		pros::lcd::clear_line(1);
+		pros::lcd::set_text(1, intakeState);
 
-		cout << intakeState;
 
 		int leftControl = (master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
 		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
@@ -191,81 +192,89 @@ void opcontrol() {
 
 		//control of intake
 
-		switch(master.get_digital(DIGITAL_A)){
-			case true:
+		if(master.get_digital(DIGITAL_B)){
 			
-				switch(int(intakeState[1])){
+				switch(intakeState.at(1)){
 					
-					case 1:
+					case int('1'):
 
 						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
 
 						intakeState.replace(1, 1, 1, '0');
-						pros::delay(10);
+						pros::delay(300);
 						break;
 
-					case 0:
+					case int('0'):
 
 						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 						intake.brake();
-						pros::delay(10);
+						pros::delay(300);
 						intakeState.replace(0, 1, 1, '0');
 						intakeState.replace(1, 1, 1, '1');	
 						break;
+
+					default:
+						intakeState.replace(1, 1, 1, 'f');
+						break;
 				}
 
-				break;
+			}
 
-			case false:
 
-				break;
-		}
 
-		switch(master.get_digital(DIGITAL_B)){
-			case true:
+		if(master.get_digital(DIGITAL_A)){
 				pistonCapture.set_value(!capture);
 				capture = !capture;
 				break;
-
-			case false:
-
-				break;
 		}
 			
-		switch(master.get_digital(DIGITAL_L1)){
-			case true:
+		if(master.get_digital(DIGITAL_L1)){
 
-				switch(int((10*intakeState[0])+(intakeState[1]))){
 
-					case 10:
+				switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
+
+					case 100*int('1')+ int('0'):
 
 						intake.brake();
 						intakeState.replace(0, 1, 1, '0');	
-						pros::delay(10);
+						pros::delay(300);
 						break;
 
-					case 00:
+					case 100*int('0')+ int('0'):
 
 						intake.move_voltage(6000);
 						intakeState.replace(0, 1, 1, '1');	
-						pros::delay(10);
+						pros::delay(300);
 						break;
 
-					case 01:
+					case 100*int('0')+ int('1'):
 
-						intake.move_relative(1, 200);
+						intake.move_relative(10, 200);
 						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(10);
+						pros::delay(5);
 						break;
 
-					case 11:
+					case 100*int('1')+ int('1'):
 						
 						pros::delay(10);
 						break;
 
+					default:
+						intakeState.replace(0, 1, 1, 'f');
+						break;
 				}
-			case false:
-				break;
-		}
+			}
+
+		if(master.get_digital(DIGITAL_R1)){
+
+				switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
+
+					
+
+				}
+
+			}
+				
+		
 	}
 }
