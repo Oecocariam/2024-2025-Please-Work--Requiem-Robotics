@@ -8,7 +8,7 @@ using namespace std;
 	pros::Controller master (CONTROLLER_MASTER);
 
 
-	pros::MotorGroup lefter ({1, 2,}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup lefter ({17, 13,}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	pros::MotorGroup righter ({11, -12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	
 
@@ -185,7 +185,7 @@ void opcontrol() {
 
 		lefter.move(leftControl);
 
-		righter.move(rightControl);
+		righter.move((0.8)*rightControl);
 		
 
 		pros::delay(2);
@@ -199,7 +199,8 @@ void opcontrol() {
 					case int('1'):
 
 						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
-						
+						intake.set_brake_mode_all(MOTOR_BRAKE_COAST);
+
 						intakeState.replace(1, 1, 1, '0');
 						pros::delay(300);
 						break;
@@ -207,6 +208,7 @@ void opcontrol() {
 					case int('0'):
 
 						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
+						intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
 						intake.brake();
 						pros::delay(300);
 						intakeState.replace(0, 1, 1, '0');
@@ -249,12 +251,12 @@ void opcontrol() {
 						break;
 
 					case 100*int('0')+ int('1'):
-
-						Braker.move_relative(5, 200);
-						intake.move_relative(-10, 200);
+						
+						
+						Braker.move_relative(50, 200);
 						intakeState.replace(0, 1, 1, '1');		
 						pros::delay(10);
-						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
+						Braker.brake();
 						break;
 
 					case 100*int('1')+ int('1'):
@@ -276,8 +278,8 @@ void opcontrol() {
 
 					case 100*int('0')+ int('1'):
 
-						Braker.move_relative(-5, 200);
-						intake.move_relative(10, 200);
+						Braker.move_relative(-10, 200);
+						intake.move_relative(100, 200);
 						intakeState.replace(0, 1, 1, '1');		
 						pros::delay(10);
 						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
