@@ -12,12 +12,12 @@ using namespace std;
 	pros::MotorGroup righter ({11, -12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	
 
-	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup intake ({7, -6}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
-	pros::Motor Braker(6, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::Motor Braker(10, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
-	pros::ADIDigitalOut pistonIntake ('A');
-	pros::ADIDigitalOut pistonCapture ('B');
+
+	pros::ADIDigitalOut pistonCapture ('A');
 
 	string intakeState("00");
 	/*
@@ -172,8 +172,7 @@ void opcontrol() {
 //	definition of piston, controller , and motors
 
 		pros::lcd::initialize();
-		Braker.brake();
-		Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
+		Braker.set_brake_mode(MOTOR_BRAKE_COAST);
 	while (true) {
 
 		pros::lcd::clear_line(1);
@@ -200,7 +199,7 @@ void opcontrol() {
 					case int('1'):
 
 						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
-
+						
 						intakeState.replace(1, 1, 1, '0');
 						pros::delay(300);
 						break;
@@ -244,20 +243,24 @@ void opcontrol() {
 					case 100*int('0')+ int('0'):
 
 						intake.move_voltage(6000);
+						Braker.move_voltage(3000);
 						intakeState.replace(0, 1, 1, '1');	
 						pros::delay(300);
 						break;
 
 					case 100*int('0')+ int('1'):
 
-						Braker.move_relative(10, 200);
+						Braker.move_relative(5, 200);
+						intake.move_relative(-10, 200);
 						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(5);
+						pros::delay(10);
+						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 						break;
 
 					case 100*int('1')+ int('1'):
 						
 						pros::delay(10);
+						intakeState.replace(0, 1, 1, '0');	
 						break;
 
 					default:
@@ -273,14 +276,17 @@ void opcontrol() {
 
 					case 100*int('0')+ int('1'):
 
-						Braker.move_relative(10, 200);
+						Braker.move_relative(-5, 200);
+						intake.move_relative(10, 200);
 						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(5);
+						pros::delay(10);
+						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 						break;
 
 					case 100*int('1')+ int('1'):
 						
 						pros::delay(10);
+						intakeState.replace(0, 1, 1, '0');	
 						break;
 
 					default:
