@@ -1,28 +1,27 @@
 #include "main.h"
-#include <bitset>
 #include <iostream>
 using namespace std; 
-
 
 
 	pros::Controller master (CONTROLLER_MASTER);
 
 
-	pros::MotorGroup lefter ({1, 2,}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-	pros::MotorGroup righter ({11, -12}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup lefter ({11, -13, 8}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::MotorGroup righter ({20, -19, 18}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	
 
-	pros::MotorGroup intake ({7, 8}, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::Motor wallScore (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
-	pros::Motor Braker(6, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::Motor intake(2, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
-	pros::ADIDigitalOut pistonIntake ('A');
-	pros::ADIDigitalOut pistonCapture ('B');
 
-	string intakeState("00");
+	pros::adi::Pneumatics pistonCapture ('a', false);
+
+	string intakeState("000");
 	/*
-		0th value: motors running
-		1st value: swing state
+		0th value: motor running
+		1st value: position
+		2nd value: motors running continous
 	*/
 
 	bool capture = false;
@@ -112,9 +111,7 @@ void initialize() {
 	
 
 	pros::lcd::register_btn1_cb(on_center_button);
-	intake.set_brake_mode_all(MOTOR_BRAKE_HOLD);
-	Braker.brake();
-	Braker.set_brake_mode(MOTOR_BRAKE_COAST);
+	intake.set_brake_mode(MOTOR_BRAKE_HOLD);
 }
 
 /**
@@ -147,7 +144,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	Braker.brake();
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -172,16 +168,14 @@ void opcontrol() {
 //	definition of piston, controller , and motors
 
 		pros::lcd::initialize();
-		Braker.brake();
-		Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 	while (true) {
 
 		pros::lcd::clear_line(1);
 		pros::lcd::set_text(1, intakeState);
 
 
-		int leftControl = (master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
-		int rightControl = (master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
+		int leftControl = 2*((-0.5)*master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
+		int rightControl = 2*((-0.5)*master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
 		
 
 		lefter.move(leftControl);
@@ -199,15 +193,14 @@ void opcontrol() {
 					
 					case int('1'):
 
-						Braker.set_brake_mode(MOTOR_BRAKE_COAST);
 
 						intakeState.replace(1, 1, 1, '0');
+						intakeState.replace(0, 1, 1, '0');
 						pros::delay(300);
 						break;
 
 					case int('0'):
 
-						Braker.set_brake_mode(MOTOR_BRAKE_HOLD);
 						intake.brake();
 						pros::delay(300);
 						intakeState.replace(0, 1, 1, '0');
@@ -224,9 +217,8 @@ void opcontrol() {
 
 
 		if(master.get_digital(DIGITAL_A)){
-				pistonCapture.set_value(!capture);
-				capture = !capture;
-				break;
+				pistonCapture.toggle();
+				pros::delay(500);
 		}
 			
 		if(master.get_digital(DIGITAL_L1)){
@@ -243,21 +235,22 @@ void opcontrol() {
 
 					case 100*int('0')+ int('0'):
 
-						intake.move_voltage(6000);
+						intake.move_voltage(12000);
 						intakeState.replace(0, 1, 1, '1');	
 						pros::delay(300);
 						break;
 
 					case 100*int('0')+ int('1'):
 
-						Braker.move_relative(10, 200);
+						intake.move_relative(-100, 200);
 						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(5);
+						pros::delay(300);
 						break;
 
 					case 100*int('1')+ int('1'):
 						
 						pros::delay(10);
+						intakeState.replace(0, 1, 1, '0');	
 						break;
 
 					default:
@@ -273,7 +266,6 @@ void opcontrol() {
 
 					case 100*int('0')+ int('1'):
 
-						Braker.move_relative(10, 200);
 						intakeState.replace(0, 1, 1, '1');		
 						pros::delay(5);
 						break;
