@@ -71,6 +71,9 @@ namespace pros {
                 }
 
                 void runContinous(int velocity){
+                    while(intaker.get_actual_velocity() > 10){
+                        pros::delay(10);
+                    }
                     intakeState.replace(0, 1, 1, '1');
                     while(intakeState.at(0)){
                         intaker.move_relative(22.5, velocity);
@@ -89,10 +92,12 @@ namespace pros {
                 }
 
                 void movePosition(int velocity, int position){
+                    void stopRunning();
                     int chainsToMove;
 
                     if(chainPosition > position){
                         chainsToMove = (72-chainPosition) + position;
+                        
                     }else if(position = chainPosition){
                         chainsToMove = 0;
                     }else{
@@ -100,10 +105,16 @@ namespace pros {
                    }
 
                    intaker.move_relative(22.5*chainsToMove, 100);
+                   if(chainsToMove +chainPosition > 72){
+                    chainPosition = (chainPosition + chainsToMove) -72;
+                   }else{
+                        chainPosition += chainsToMove;
+                   }       
                    pros::delay(100);
                 }
 
                 void readyHook(int velocity, bool wall){
+                    void stopRunning();
                     if(wall){
                         if(71>chainPosition>47){
                             movePosition(100, 71);
