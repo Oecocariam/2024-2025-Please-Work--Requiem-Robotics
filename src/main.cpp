@@ -242,6 +242,22 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+intake.runContinous(200);
+drive(10, 300);
+turn(45, 300, 2);
+drive(200, 300);
+turn(60, 300, -1);
+drive(-300, 300);
+pistonCapture.extend();
+turn(45, 300, 1);
+drive(400, 300);
+turn(20, 300, -1);
+drive(300, 300);
+turn(30, 400, 0);
+intake.stopRunning();
+intake.readyHook(300, false);
+drive(300, 300);
+intake.readyHook(300, true);
 
 /**
  * Runs the operator control code. This function will be started in its own task
