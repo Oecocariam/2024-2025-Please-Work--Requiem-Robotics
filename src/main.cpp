@@ -18,7 +18,7 @@ using namespace std;
 
 	pros::adi::Pneumatics pistonCapture ('h', false);
 
-	pros::Intake intake("000", intaker);
+	pros::Intake intake(intaker);
 
 	bool capture = false;
 	
