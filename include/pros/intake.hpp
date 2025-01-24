@@ -79,6 +79,7 @@ namespace pros {
                         intaker.move_relative(22.5, velocity);
                             if(chainPosition<72){
                                 chainPosition += 1;
+                                pros::delay(25);
                             }else{
                                 chainPosition = 0;
                             }

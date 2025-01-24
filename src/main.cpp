@@ -21,7 +21,9 @@ using namespace std;
 	pros::Intake intake(intaker);
 
 	bool capture = false;
-	
+
+	pros::Distance laserL(14);
+	pros::Distance laserR(7);
 
 
 double averageMotorVoltage(pros::MotorGroup& motors){
@@ -78,6 +80,41 @@ void turn (double robot_degrees, double speed, int negatation) {
 			break;
 		}
 	}
+}
+
+void wallRight(double distance){
+	 
+	int averageDistance = (laserL.get_distance()-laserR.get_distance())/2;
+
+	 while(.5>abs(laserL.get_distance()-laserR.get_distance())){
+		lefter.brake();
+		righter.brake();
+		if(laserL.get_distance()>laserR.get_distance()){
+			lefter.move(20);
+			pros::delay(20);
+		}
+		if(laserL.get_distance()<laserR.get_distance()){
+			righter.move(20);
+			pros::delay(20);
+		}
+	 }
+
+	 while(.5> averageDistance - distance){
+		averageDistance = (laserL.get_distance()-laserR.get_distance())/2;
+		drive(distance-averageDistance, 20);
+	 }
+	 while(.25<abs(laserL.get_distance()-laserR.get_distance())){
+		lefter.brake();
+		righter.brake();
+		if(laserL.get_distance()>laserR.get_distance()){
+			lefter.move(20);
+			pros::delay(20);
+		}
+		if(laserL.get_distance()<laserR.get_distance()){
+			righter.move(20);
+			pros::delay(20);
+		}
+	 }
 }
 
 /**
