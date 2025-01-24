@@ -1,5 +1,6 @@
 #include "main.h"
 #include <iostream>
+#include "intake.hpp"
 using namespace std; 
 
 
@@ -12,17 +13,12 @@ using namespace std;
 
 	pros::Motor wallScore (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
-	pros::Motor intake(2, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::Motor intaker(2, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
 
-	pros::adi::Pneumatics pistonCapture ('a', false);
+	pros::adi::Pneumatics pistonCapture ('h', false);
 
-	string intakeState("000");
-	/*
-		0th value: motor running
-		1st value: position
-		2nd value: motors running continous
-	*/
+	
 
 	bool capture = false;
 	
@@ -189,22 +185,24 @@ void opcontrol() {
 
 		if(master.get_digital(DIGITAL_B)){
 			
-				switch(intakeState.at(1)){
+				switch(intakeState.at(2)){
 					
 					case int('1'):
 
 
-						intakeState.replace(1, 1, 1, '0');
+						intakeState.replace(2, 1, 1, '0');
 						intakeState.replace(0, 1, 1, '0');
+						intake.brake();
 						pros::delay(300);
 						break;
 
 					case int('0'):
 
-						intake.brake();
 						pros::delay(300);
-						intakeState.replace(0, 1, 1, '0');
-						intakeState.replace(1, 1, 1, '1');	
+						
+						
+						intakeState.replace(2, 1, 1, '1');
+						intakeState.replace(0, 1, 1, '1');	
 						break;
 
 					default:
