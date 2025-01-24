@@ -22,6 +22,7 @@ using namespace std;
 
 	pros::Intake intake(intaker);
 
+	bool flexRun = false;
 	bool capture = false;
 
 	pros::Distance laserL(14);
@@ -232,7 +233,6 @@ void opcontrol() {
 			pros::delay(500);
 		}
 
-
 		if(master.get_digital(DIGITAL_B)){
 			if(intake.getIntakeState().at(0)){
 				intake.runContinous(100);
@@ -254,165 +254,32 @@ void opcontrol() {
 		}
 
 
-
 		if(master.get_digital(DIGITAL_R1)&&master.get_digital(DIGITAL_DOWN)){
 			wallRight(200);
 			wallMech();
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_L1)){
+		if(master.get_digital_new_press(DIGITAL_L1)){
 			intake.readyHook(100, true);
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_L2)){
+		if(master.get_digital_new_press(DIGITAL_L2)){
 			intake.readyHook(100, false);
 			pros::delay(500);
 		}
 
-		//deprecated control of intake
-/*
-		if(master.get_digital(DIGITAL_B)){
-			
-				switch(intakeState.at(2)){
-					
-					case int('1'):
-
-
-						intakeState.replace(2, 1, 1, '0');
-						intakeState.replace(0, 1, 1, '0');
-						intake.brake();
-						pros::delay(300);
-						break;
-
-					case int('0'):
-
-						pros::delay(300);
-						
-						
-						intakeState.replace(2, 1, 1, '1');
-						intakeState.replace(0, 1, 1, '1');	
-						break;
-
-					default:
-						intakeState.replace(1, 1, 1, 'f');
-						break;
-				}
-
+		if(master.get_digital_new_press(DIGITAL_X)){
+			if(!flexRun){
+				flex.move_velocity(400);
+				flexRun = true;
+			}else{
+				flex.brake();
+				flexRun = false;
 			}
-
-
-
-
-			
-		if(master.get_digital(DIGITAL_L1)){
-
-
-				switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
-
-					case 100*int('1')+ int('0'):
-
-						intake.brake();
-						intakeState.replace(0, 1, 1, '0');	
-						pros::delay(300);
-						break;
-
-					case 100*int('0')+ int('0'):
-
-						intake.move_voltage(12000);
-						intakeState.replace(0, 1, 1, '1');	
-						pros::delay(300);
-						break;
-
-					case 100*int('0')+ int('1'):
-
-						intake.move_relative(-100, 200);
-						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(300);
-						break;
-
-					case 100*int('1')+ int('1'):
-						
-						pros::delay(10);
-						intakeState.replace(0, 1, 1, '0');	
-						break;
-
-					default:
-						intakeState.replace(0, 1, 1, 'f');
-						break;
-				}
-			}
-
-
-		if(master.get_digital(DIGITAL_R1)){
-
-				switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
-
-					case 100*int('0')+ int('1'):
-
-						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(5);
-						break;
-
-					case 100*int('1')+ int('1'):
-						
-						pros::delay(10);
-						break;
-
-					default:
-						break;
-					
-
-			}
-
 		}
 
-		if(master.get_digital(DIGITAL_UP)){
-			
-			switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
-
-					case 100*int('0')+ int('0'):
-
-						intake.move_relative(10, 200);
-						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(5);
-						break;
-
-					case 100*int('1')+ int('0'):
-						
-						pros::delay(10);
-						break;
-
-					default:
-						break;
-
-			}
-
-		}
-
-		if(master.get_digital(DIGITAL_DOWN)){
-			
-			switch(int((100*int(intakeState.at(0)))+int(intakeState.at(1)))){
-
-					case 100*int('0')+ int('0'):
-
-						intake.move_relative(10, 200);
-						intakeState.replace(0, 1, 1, '1');		
-						pros::delay(5);
-						break;
-
-					case 100*int('1')+ int('0'):
-						
-						pros::delay(10);
-						break;
-
-					default:
-						break;
-
-			}
-
-		}*/
 
 	}		
 		
