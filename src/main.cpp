@@ -13,6 +13,7 @@ using namespace std;
 
 	pros::Motor wallScore (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
+
 	pros::Motor intaker(2, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
 
@@ -117,6 +118,13 @@ void wallRight(double distance){
 	 }
 }
 
+void wallMech(){
+	wallScore.move_relative(270, 100);
+	pros::delay(100);
+	wallScore.move_absolute(20, 100);
+	wallScore.brake();
+}
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -176,7 +184,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-
+	wallScore.set_voltage_limit(5500);
+	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -193,8 +202,8 @@ void autonomous() {
 }
 
 void opcontrol() {
-
-	
+	wallScore.set_voltage_limit(5500);
+	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	
 //	definition of piston, controller , and motors
@@ -234,6 +243,12 @@ void opcontrol() {
 
 		if(master.get_digital(DIGITAL_R1)&!master.get_digital(DIGITAL_UP)){
 			intake.readyHook(100, true);
+			pros::delay(500);
+		}
+
+		if(master.get_digital(DIGITAL_R1)&!master.get_digital(DIGITAL_UP)){
+			intake.readyHook(100, true);
+			wallRight(100);
 			pros::delay(500);
 		}
 

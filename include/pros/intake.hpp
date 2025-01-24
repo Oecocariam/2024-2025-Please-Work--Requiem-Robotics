@@ -117,15 +117,17 @@ namespace pros {
                 void readyHook(int velocity, bool wall){
                     void stopRunning();
                     if(wall){
+
                         if(71>chainPosition>47){
-                            movePosition(velocity, 71);
-                            
+                            movePosition(velocity, 71); 
                         }else if(47>chainPosition>22){
                             movePosition(velocity, 47);
                         }else{
                             movePosition(velocity, 22);
                         }
+
                     }else{
+
                         if(39>chainPosition>60){
                             movePosition(velocity, 60);
                         }else if(60>chainPosition>3){
@@ -133,6 +135,7 @@ namespace pros {
                         }else{
                             movePosition(velocity, 39);
                         }
+                        
                     }
 
                     pros::delay(1000);
