@@ -16,6 +16,7 @@ using namespace std;
 
 	pros::Motor intaker(2, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
+	pros::Motor flex (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
 	pros::adi::Pneumatics pistonCapture ('h', false);
 
@@ -241,18 +242,31 @@ void opcontrol() {
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_R1)&!master.get_digital(DIGITAL_UP)){
-			intake.readyHook(100, true);
+		if(master.get_digital(DIGITAL_R1)&&!master.get_digital(DIGITAL_UP)&&!!master.get_digital(DIGITAL_DOWN)){
+			wallMech();
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_R1)&!master.get_digital(DIGITAL_UP)){
-			intake.readyHook(100, true);
+		if(master.get_digital(DIGITAL_R1)&&master.get_digital(DIGITAL_UP)){
 			wallRight(100);
+			wallMech();
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_R2)){
+
+
+		if(master.get_digital(DIGITAL_R1)&&master.get_digital(DIGITAL_DOWN)){
+			wallRight(200);
+			wallMech();
+			pros::delay(500);
+		}
+
+		if(master.get_digital(DIGITAL_L1)){
+			intake.readyHook(100, true);
+			pros::delay(500);
+		}
+
+		if(master.get_digital(DIGITAL_L2)){
 			intake.readyHook(100, false);
 			pros::delay(500);
 		}
