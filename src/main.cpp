@@ -195,6 +195,16 @@ void opcontrol() {
 			pros::delay(500);
 		}
 
+		if(master.get_digital(DIGITAL_R1)){
+			intake.readyHook(100, true);
+			pros::delay(500);
+		}
+
+		if(master.get_digital(DIGITAL_R2)){
+			intake.readyHook(100, false);
+			pros::delay(500);
+		}
+
 		//deprecated control of intake
 /*
 		if(master.get_digital(DIGITAL_B)){
