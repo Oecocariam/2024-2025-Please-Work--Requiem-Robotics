@@ -1,7 +1,7 @@
 #include "main.h"
 #include <iostream>
 
-#ifdef _INTAKE_HPP_
+#ifndef _INTAKE_HPP_
 #define _INTAKE_HPP_
 
 using namespace std; 
