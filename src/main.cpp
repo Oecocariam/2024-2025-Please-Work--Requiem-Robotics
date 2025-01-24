@@ -28,7 +28,9 @@ using namespace std;
 	pros::Distance laserL(14);
 	pros::Distance laserR(7);
 
-
+/**
+ * A function that turns returns the average motor voltage of the inputted motor group
+ */
 double averageMotorVoltage(pros::MotorGroup& motors){
 	double x;
 	int motorCount = motors.get_port_all().size();
@@ -40,6 +42,12 @@ double averageMotorVoltage(pros::MotorGroup& motors){
 	return x;
 }
 
+/**
+ * A function that drives the robot, double centimeter, double speed, and in a direction of your choosing
+ * 
+ * When called it calculates how far the wheels must turn to drive the robot however far the call is, 
+ *it then waits until the motors stop turning to break
+ */
 void drive (double distance, double speed ) { 
 
 		double efficiency_modifier = 1.;
@@ -65,6 +73,12 @@ void drive (double distance, double speed ) {
 	}
 }
 
+/**
+ * A function that turns the robot, double degrees, double speed, and in a direction of your choosing
+ * 
+ * When called it calculates how far the wheels must turn to turn the robot however far the call is, 
+ *it then waits until the motors stop turning to break
+ */
 void turn (double robot_degrees, double speed, int negatation) {
 
 	double motor_degrees = (robot_degrees/0.1361)-(7.667*negatation);
@@ -85,6 +99,13 @@ void turn (double robot_degrees, double speed, int negatation) {
 	}
 }
 
+/**
+ * A function that turns aligns the robot to the wall double distance from the wall using distance sensors
+ * 
+ * When called it will first spin either side of the robots motors until they line up evenly
+ * then it will drive forward until it meets the desired distance
+ * finally is repeats the first step to realign and breaks
+ */
 void wallRight(double distance){
 	 
 	int averageDistance = (laserL.get_distance()-laserR.get_distance())/2;
@@ -120,6 +141,7 @@ void wallRight(double distance){
 	 }
 }
 
+
 void wallMech(){
 	wallScore.move_relative(270, 100);
 	pros::delay(100);
@@ -144,6 +166,39 @@ void on_center_button() {
 }
 
 /**
+ * A callback function for LLEMU's left button.
+ *
+ * When this callback is fired, it will toggle line 3 of the LCD text between
+ * "I was pressed!" and nothing.
+ */
+void on_left_button() {
+	static bool pressed = false;
+	pressed = !pressed;
+	if (pressed) {
+		pros::lcd::set_text(3, "I was pressed!");
+	} else {
+		pros::lcd::clear_line(3);
+	}
+}
+
+/**
+ * A callback function for LLEMU's left button.
+ *
+ * When this callback is fired, it will toggle line 4 of the LCD text between
+ * "I was pressed!" and nothing.
+ */
+void on_right_button() {
+	static bool pressed = false;
+	pressed = !pressed;
+	if (pressed) {
+		pros::lcd::set_text(4, "I was pressed!");
+	} else {
+		pros::lcd::clear_line(4);
+	}
+}
+
+
+/**
  * Runs initialization code. This occurs as soon as the program is started.
  *
  * All other competition modes are blocked by initialize; it is recommended
@@ -151,7 +206,8 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	
+		wallScore.set_voltage_limit(5500);
+	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -186,8 +242,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	wallScore.set_voltage_limit(5500);
-	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -204,8 +259,6 @@ void autonomous() {
 }
 
 void opcontrol() {
-	wallScore.set_voltage_limit(5500);
-	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	
 //	definition of piston, controller , and motors
