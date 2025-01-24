@@ -86,7 +86,7 @@ void wallRight(double distance){
 	 
 	int averageDistance = (laserL.get_distance()-laserR.get_distance())/2;
 
-	 while(.5>abs(laserL.get_distance()-laserR.get_distance())){
+	 while(10>abs(laserL.get_distance()-laserR.get_distance())){
 		lefter.brake();
 		righter.brake();
 		if(laserL.get_distance()>laserR.get_distance()){
@@ -99,11 +99,11 @@ void wallRight(double distance){
 		}
 	 }
 
-	 while(.5> averageDistance - distance){
+	 while(5> averageDistance - distance){
 		averageDistance = (laserL.get_distance()-laserR.get_distance())/2;
 		drive(distance-averageDistance, 20);
 	 }
-	 while(.25<abs(laserL.get_distance()-laserR.get_distance())){
+	 while(5<abs(laserL.get_distance()-laserR.get_distance())){
 		lefter.brake();
 		righter.brake();
 		if(laserL.get_distance()>laserR.get_distance()){
@@ -232,7 +232,7 @@ void opcontrol() {
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_R1)){
+		if(master.get_digital(DIGITAL_R1)&!master.get_digital(DIGITAL_UP)){
 			intake.readyHook(100, true);
 			pros::delay(500);
 		}
