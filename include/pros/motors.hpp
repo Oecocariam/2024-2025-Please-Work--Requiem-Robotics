@@ -66,12 +66,12 @@ class Motor : public AbstractMotor, public Device {
 	 *  Motor reversed_motor(-2); //Creates a reversed motor on port 1 port 1 without altering gearset or encoder units
 	 *  Motor blue_motor(3, pros::v5::MotorGears::blue); //Creates a motor on port 3 with blue gear set
 	 *  Motor rotations_motor(4, pros::v5::MotorGears::green, pros::v5::MotorUnits::rotations); //port 4 w/ rotations
-	 *
+	 *s
 	 * }
 	 * \endcode
 	 *
 	 */
-	Motor(const std::int8_t port, const pros::v5::MotorGears gearset = pros::v5::MotorGears::invalid,
+	Motor(const std::int8_t port = 1, const pros::v5::MotorGears gearset = pros::v5::MotorGears::invalid,
 	      const pros::v5::MotorUnits encoder_units = pros::v5::MotorUnits::invalid);
 
 	Motor(const Device& device) : Motor(device.get_port()){};
@@ -88,7 +88,7 @@ class Motor : public AbstractMotor, public Device {
 	 * analogous to use of motor_move().
 	 *
 	 * This function uses the following values of errno when an error state is
-	 * reached:
+	 * reached:s
 	 * ENODEV - The port cannot be configured as a motor
 	 *
 	 * \param voltage
@@ -111,9 +111,15 @@ class Motor : public AbstractMotor, public Device {
 	 */
 	std::int32_t move(std::int32_t voltage) const;
 
-	Motor operator=(Motor); 
+	Motor operator=(pros::v5::Motor& other){
+		Motor out;
+		out._port = other._port;
+		out.set_gearing(other.get_gearing());
+		out.set_encoder_units(other.get_encoder_units());
 
-	pros::Motor::Motor ();
+		return out;
+	}
+
 
 	/**
 	 * Sets the target absolute position for the motor to move to.
