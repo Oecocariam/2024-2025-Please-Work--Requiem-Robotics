@@ -18,7 +18,7 @@ using namespace std;
 
 	pros::adi::Pneumatics pistonCapture ('h', false);
 
-	
+	pros::Intake intake("000", intaker);
 
 	bool capture = false;
 	
@@ -107,7 +107,6 @@ void initialize() {
 	
 
 	pros::lcd::register_btn1_cb(on_center_button);
-	intake.set_brake_mode(MOTOR_BRAKE_HOLD);
 }
 
 /**
@@ -167,7 +166,7 @@ void opcontrol() {
 	while (true) {
 
 		pros::lcd::clear_line(1);
-		pros::lcd::set_text(1, intakeState);
+		pros::lcd::set_text(1, intake.getIntakeState());
 
 
 		int leftControl = 2*((-0.5)*master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
@@ -181,8 +180,13 @@ void opcontrol() {
 
 		pros::delay(2);
 
-		//control of intake
+				if(master.get_digital(DIGITAL_A)){
+				pistonCapture.toggle();
+				pros::delay(500);
+		}
 
+		//deprecated control of intake
+/*
 		if(master.get_digital(DIGITAL_B)){
 			
 				switch(intakeState.at(2)){
@@ -214,10 +218,7 @@ void opcontrol() {
 
 
 
-		if(master.get_digital(DIGITAL_A)){
-				pistonCapture.toggle();
-				pros::delay(500);
-		}
+
 			
 		if(master.get_digital(DIGITAL_L1)){
 
@@ -325,7 +326,7 @@ void opcontrol() {
 
 			}
 
-		}
+		}*/
 
 	}		
 		

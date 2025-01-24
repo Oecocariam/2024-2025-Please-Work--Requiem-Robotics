@@ -111,6 +111,10 @@ class Motor : public AbstractMotor, public Device {
 	 */
 	std::int32_t move(std::int32_t voltage) const;
 
+	Motor operator=(Motor); 
+
+	pros::Motor::Motor ();
+
 	/**
 	 * Sets the target absolute position for the motor to move to.
 	 *
