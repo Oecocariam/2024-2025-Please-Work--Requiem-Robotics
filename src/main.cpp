@@ -180,9 +180,19 @@ void opcontrol() {
 
 		pros::delay(2);
 
-				if(master.get_digital(DIGITAL_A)){
-				pistonCapture.toggle();
-				pros::delay(500);
+		if(master.get_digital(DIGITAL_A)){
+			pistonCapture.toggle();
+			pros::delay(500);
+		}
+
+
+		if(master.get_digital(DIGITAL_B)){
+			if(intake.getIntakeState().at(0)){
+				intake.runContinous(100);
+			}else{
+				intake.stopRunning();
+			}
+			pros::delay(500);
 		}
 
 		//deprecated control of intake

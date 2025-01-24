@@ -117,20 +117,20 @@ namespace pros {
                     void stopRunning();
                     if(wall){
                         if(71>chainPosition>47){
-                            movePosition(100, 71);
+                            movePosition(velocity, 71);
                             
                         }else if(47>chainPosition>22){
-                            movePosition(100, 47);
+                            movePosition(velocity, 47);
                         }else{
-                            movePosition(100, 22);
+                            movePosition(velocity, 22);
                         }
                     }else{
                         if(39>chainPosition>60){
-                            movePosition(100, 60);
+                            movePosition(velocity, 60);
                         }else if(60>chainPosition>3){
-                            movePosition(100, 3);
+                            movePosition(velocity, 3);
                         }else{
-                            movePosition(100, 39);
+                            movePosition(velocity, 39);
                         }
                     }
 
