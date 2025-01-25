@@ -63,21 +63,30 @@ namespace pros {
                     return chainPosition;
                 }
 
-                void runContinous(int velocity,  pros::Motor iIntaker){
+                void runContinousLoop(int velocity,  pros::Motor iIntaker){
+                    while(true){
 
-                    intakeState.replace(0, 1, 1, '1');
-                    while((intakeState.at(0)=  1)){
-                        iIntaker.move_relative(1080, velocity);
-                            if(chainPosition<72){
-                                chainPosition += 24;
+                        if(intakeState.at(0)=  1){
+                            while((intakeState.at(0) =  1)){
+                                iIntaker.move_relative(1080, velocity);
+                                 if(chainPosition<72){
+                                    chainPosition += 24;
+                                        
+                                }else{
+                                    chainPosition = 0;
+                                }
+                                pros::delay(1000);
+                                }
                                 
-                            }else{
-                                chainPosition = 0;
-                            }
-                        pros::delay(1000);
+                            iIntaker.brake();
+                        }
+
+                        pros::delay(3);
                     }
-                    
-                    iIntaker.brake();
+                }
+
+                void runContinous(){
+                    intakeState.replace(0, 1, 1, '1');
                 }
 
                 void stopRunning(){

@@ -217,6 +217,7 @@ void initialize() {
 	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
     intaker.set_voltage_limit(5500);
 	pros::lcd::register_btn1_cb(on_center_button);
+	pros::Task intakeLoop(intake.runContinousLoop());
 }
 
 /**
@@ -256,7 +257,7 @@ void autonomous() {
 
 	switch(autonMode){
 		case 0:
-			intake.runContinous(200, intaker);
+			intake.runContinous();
 			drive(10, 300);
 			turn(45, 300, 2);
 			drive(200, 300);
@@ -328,7 +329,7 @@ void opcontrol() {
 		if(master.get_digital(DIGITAL_B)){
 	
 			if((intake.getIntakeState().at(0)) = 0){
-				intake.runContinous(400, intaker);
+				intake.runContinous();
 			}else{
 				intake.stopRunning();
 			}
