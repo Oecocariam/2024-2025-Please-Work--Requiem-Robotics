@@ -87,6 +87,12 @@ namespace pros {
                         pros::delay(3);
                     }
                     return 0;
+                    void startTask(){
+                        pros::Task my_task([this] { 
+                        this->task_loop(); 
+                        pros::delay(10);
+                    } );
+                    }
                 }
 
                 void runContinous(){

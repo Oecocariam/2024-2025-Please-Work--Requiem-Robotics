@@ -78,28 +78,7 @@ int drive (double distance, double speed ) {
 	return 0;
 }
 
-int runContinousLoop(double param, pros::Motor param2){
-    while(true){
 
-        if(intake.getIntakeState().at(0)=  1){
-                while((intake.getIntakeState().at(0) =  1)){
-                        param2.move_relative(1080, param);
-                            if(intake.getChainPosition()<72){
-                               intake.setChainPosition(intake.getChainPosition()+24);
-                                        
-                            }else{
-                                intake.setChainPosition(0);
-                            }
-                            pros::delay(1000);
-                            }
-                                
-                        param2.brake();
-                        }
-
-                        pros::delay(3);
-                    }
-                    return 0;
-                }
 
 /**
  * A function that turns the robot, double degrees, double speed, and in a direction of your choosing
@@ -239,7 +218,7 @@ void on_right_button() {
 
 
 void startTask(){
-    pros::Task intakeLoop(runContinousLoop(200, intaker), "intakeLoop");
+    pros::Task intakeLoop(runContinousLoop, (void*)200 (void*)intaker, "intakeLoop");
 }
 void initialize() {
 	pros::lcd::initialize();
