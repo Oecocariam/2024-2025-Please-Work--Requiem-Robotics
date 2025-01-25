@@ -26,6 +26,8 @@ using namespace std;
 
 	bool flexRun = false;
 	bool capture = false;
+	int autonMode = 0;
+	string autonName[2] = {"skills", "easy auton"};
 
 	pros::Distance laserL(14);
 	pros::Distance laserR(7);
@@ -158,13 +160,15 @@ void wallMech(double velocity){
  * "I was pressed!" and nothing.
  */
 void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
+	pros::lcd::clear_line(2);
+
+	if (autonMode < autonName->length()){
+		autonMode += 1;
+	}else{
+		autonMode = 0;
 	}
+	pros::lcd::set_text(3, autonName[autonMode]);
+
 }
 
 
@@ -210,7 +214,6 @@ void on_right_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	wallScore.set_voltage_limit(5500);
 	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
     intaker.set_voltage_limit(5500);
 	pros::lcd::register_btn1_cb(on_center_button);
@@ -232,7 +235,11 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	pros::lcd::register_btn1_cb(on_center_button);
+
+
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -246,22 +253,32 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-intake.runContinous(200, intaker);
-drive(10, 300);
-turn(45, 300, 2);
-drive(200, 300);
-turn(60, 300, -1);
-drive(-300, 300);
-pistonCapture.extend();
-turn(45, 300, 1);
-drive(400, 300);
-turn(20, 300, -1);
-drive(300, 300);
-turn(30, 400, 0);
- intake.stopRunning();
- intake.readyHook(300, false, intaker);
-drive(300, 300);
- intake.readyHook(300, true, intaker);
+
+	switch(autonMode){
+		case 0:
+			intake.runContinous(200, intaker);
+			drive(10, 300);
+			turn(45, 300, 2);
+			drive(200, 300);
+			turn(60, 300, -1);
+			drive(-300, 300);
+			pistonCapture.extend();
+			turn(45, 300, 1);
+			drive(400, 300);
+			turn(20, 300, -1);
+			drive(300, 300);
+			turn(30, 400, 0);
+			intake.stopRunning();
+			intake.readyHook(300, false, intaker);
+			drive(300, 300);
+			intake.readyHook(300, true, intaker);
+
+			break;
+
+		case 1:
+
+		break;
+	}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -289,6 +306,8 @@ void opcontrol() {
 		pros::lcd::clear_line(1);
 		pros::lcd::set_text(1,  intake.getIntakeState());
 
+		pros::lcd::clear_line(2);
+		pros::lcd::set_text(2, to_string(intake.getChainPosition()));
 
 		int leftControl = 3*((-0.5)*master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
 		int rightControl = 3*((-0.5)*master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
