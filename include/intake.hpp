@@ -15,7 +15,7 @@ namespace pros {
                 /*
                     0th value: motor running
                 */
-                pros::Motor intaker;
+//                pros::Motor intaker;
                 int chainPosition;
                 /*
                     total length of chain: 72
@@ -33,34 +33,26 @@ namespace pros {
 
             public:
 
-                Intake(string iIntakeState, pros::Motor iIntaker, int iChainPosition){
+                Intake(string iIntakeState, int iChainPosition){
                     intakeState = iIntakeState;
-                    intaker = iIntaker;
-                    intaker.set_voltage_limit(5500);
+//
                     chainPosition = iChainPosition;
-                    intaker.set_encoder_units(pros::v5::MotorUnits::degrees);
                 };
 
-                Intake(string iIntakeState, pros::Motor iIntaker){
+                Intake(string iIntakeState){
                     intakeState = iIntakeState;
-                    intaker = iIntaker;
-                    intaker.set_voltage_limit(5500);
-                    chainPosition = 1;
-                    intaker.set_encoder_units(pros::v5::MotorUnits::degrees);
-                };
-
-                Intake(pros::Motor iIntaker){
-                    intakeState = "000";
-                    intaker = iIntaker;
-                    intaker.set_voltage_limit(5500);
+//                    intaker = iIntaker;
                     chainPosition = 1;
                 };
 
                 Intake(){
                     intakeState = "000";
-                    intaker.set_voltage_limit(5500);
+//                    intaker = iIntaker;
+
                     chainPosition = 1;
                 };
+
+
 
 
                 string getIntakeState(){
@@ -71,29 +63,29 @@ namespace pros {
                     return chainPosition;
                 }
 
-                void runContinous(int velocity){
-                    while(intaker.get_actual_velocity() > 10){
+                void runContinous(int velocity,  pros::Motor iIntaker){
+                    while(iIntaker.get_actual_velocity() > 10){
                         pros::delay(10);
                     }
                     intakeState.replace(0, 1, 1, '1');
                     while(intakeState.at(0)){
-                        intaker.move_relative(22.5, velocity);
+                        iIntaker.move_relative(1080, velocity);
                             if(chainPosition<72){
-                                chainPosition += 1;
-                                pros::delay(25);
+                                chainPosition += 24;
+                                
                             }else{
                                 chainPosition = 0;
                             }
-                        pros::delay(100);
+                        pros::delay(1000);
                     }
-                    intaker.brake();
+                    iIntaker.brake();
                 }
 
                 void stopRunning(){
                     intakeState.replace(0, 1, 1, '0');
                 }
 
-                void movePosition(int velocity, int position){
+                void movePosition(int velocity, int position,  pros::Motor iIntaker){
                     void stopRunning();
                     int chainsToMove;
 
@@ -106,35 +98,35 @@ namespace pros {
                         chainsToMove = position-chainPosition;
                    }
 
-                   intaker.move_relative(22.5*chainsToMove, 100);
-                   if(chainsToMove +chainPosition > 72){
-                    chainPosition = (chainPosition + chainsToMove) -72;
+                   iIntaker.move_relative(22.5*chainsToMove, 100);
+                   if(chainsToMove +chainPosition > 71){
+                    chainPosition = (chainPosition + chainsToMove) -71;
                    }else{
                         chainPosition += chainsToMove;
                    }       
                    pros::delay(100);
                 }
 
-                void readyHook(int velocity, bool wall){
+                void readyHook(int velocity, bool wall,  pros::Motor iIntaker){
                     void stopRunning();
                     if(wall){
 
                         if(71>chainPosition>47){
-                            movePosition(velocity, 71); 
+                            movePosition(velocity, 71,   iIntaker); 
                         }else if(47>chainPosition>22){
-                            movePosition(velocity, 47);
+                            movePosition(velocity, 47,  iIntaker);
                         }else{
-                            movePosition(velocity, 22);
+                            movePosition(velocity, 22,  iIntaker);
                         }
 
                     }else{
 
                         if(39>chainPosition>60){
-                            movePosition(velocity, 60);
+                            movePosition(velocity, 60,  iIntaker);
                         }else if(60>chainPosition>3){
-                            movePosition(velocity, 3);
+                            movePosition(velocity, 3,  iIntaker);
                         }else{
-                            movePosition(velocity, 39);
+                            movePosition(velocity, 39,  iIntaker);
                         }
                         
                     }

@@ -11,16 +11,18 @@ using namespace std;
 	pros::MotorGroup righter ({20, -19, 18}, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 	
 
-	pros::Motor wallScore (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+	pros::Motor wallScore (-10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
 
-	pros::Motor intaker(2, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
+	pros::Motor intaker(-17, pros::v5::MotorGears::red, pros::v5::MotorUnits::degrees);
 
-	pros::Motor flex (10, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+
+
+	pros::Motor flex (9, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
 	pros::adi::Pneumatics pistonCapture ('h', false);
 
-	pros::Intake intake(intaker);
+	pros::Intake intake("000");
 
 	bool flexRun = false;
 	bool capture = false;
@@ -142,10 +144,10 @@ void wallRight(double distance){
 }
 
 
-void wallMech(){
-	wallScore.move_relative(270, 100);
-	pros::delay(100);
-	wallScore.move_absolute(20, 100);
+void wallMech(double velocity){
+	wallScore.move_relative(270, velocity);
+	pros::delay(2000);
+	wallScore.move_absolute(20, velocity);
 	wallScore.brake();
 }
 
@@ -164,6 +166,8 @@ void on_center_button() {
 		pros::lcd::clear_line(2);
 	}
 }
+
+
 
 /**
  * A callback function for LLEMU's left button.
@@ -206,9 +210,9 @@ void on_right_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-		wallScore.set_voltage_limit(5500);
+	wallScore.set_voltage_limit(5500);
 	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
-
+    intaker.set_voltage_limit(5500);
 	pros::lcd::register_btn1_cb(on_center_button);
 }
 
@@ -242,7 +246,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-intake.runContinous(200);
+intake.runContinous(200, intaker);
 drive(10, 300);
 turn(45, 300, 2);
 drive(200, 300);
@@ -254,10 +258,10 @@ drive(400, 300);
 turn(20, 300, -1);
 drive(300, 300);
 turn(30, 400, 0);
-intake.stopRunning();
-intake.readyHook(300, false);
+ intake.stopRunning();
+ intake.readyHook(300, false, intaker);
 drive(300, 300);
-intake.readyHook(300, true);
+ intake.readyHook(300, true, intaker);
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -283,11 +287,11 @@ void opcontrol() {
 	while (true) {
 
 		pros::lcd::clear_line(1);
-		pros::lcd::set_text(1, intake.getIntakeState());
+		pros::lcd::set_text(1,  intake.getIntakeState());
 
 
-		int leftControl = 2*((-0.5)*master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
-		int rightControl = 2*((-0.5)*master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
+		int leftControl = 3*((-0.5)*master.get_analog(ANALOG_LEFT_X))+(-master.get_analog(ANALOG_LEFT_Y));
+		int rightControl = 3*((-0.5)*master.get_analog(ANALOG_LEFT_X))-(-master.get_analog(ANALOG_LEFT_Y));
 		
 
 		lefter.move(leftControl);
@@ -303,39 +307,34 @@ void opcontrol() {
 		}
 
 		if(master.get_digital(DIGITAL_B)){
+	
 			if(intake.getIntakeState().at(0)){
-				intake.runContinous(100);
+				intake.runContinous(400, intaker);
 			}else{
 				intake.stopRunning();
 			}
 			pros::delay(500);
+			
 		}
 
-		if(master.get_digital(DIGITAL_R1)&&!master.get_digital(DIGITAL_UP)&&!!master.get_digital(DIGITAL_DOWN)){
-			wallMech();
+		if(master.get_digital(DIGITAL_R1)){
+			wallMech(100);
 			pros::delay(500);
 		}
 
-		if(master.get_digital(DIGITAL_R1)&&master.get_digital(DIGITAL_UP)){
+		if(master.get_digital(DIGITAL_UP)){
 			wallRight(100);
-			wallMech();
-			pros::delay(500);
-		}
-
-
-		if(master.get_digital(DIGITAL_R1)&&master.get_digital(DIGITAL_DOWN)){
-			wallRight(200);
-			wallMech();
+			wallMech(100);
 			pros::delay(500);
 		}
 
 		if(master.get_digital_new_press(DIGITAL_L1)){
-			intake.readyHook(100, true);
+			intake.readyHook(200, true, intaker);
 			pros::delay(500);
 		}
 
 		if(master.get_digital_new_press(DIGITAL_L2)){
-			intake.readyHook(100, false);
+			intake.readyHook(200, false, intaker);
 			pros::delay(500);
 		}
 
