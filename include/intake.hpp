@@ -64,11 +64,9 @@ namespace pros {
                 }
 
                 void runContinous(int velocity,  pros::Motor iIntaker){
-                    while(iIntaker.get_actual_velocity() > 10){
-                        pros::delay(10);
-                    }
+
                     intakeState.replace(0, 1, 1, '1');
-                    while(intakeState.at(0)){
+                    while((intakeState.at(0)=  1)){
                         iIntaker.move_relative(1080, velocity);
                             if(chainPosition<72){
                                 chainPosition += 24;
@@ -78,6 +76,7 @@ namespace pros {
                             }
                         pros::delay(1000);
                     }
+                    
                     iIntaker.brake();
                 }
 
@@ -90,7 +89,7 @@ namespace pros {
                     int chainsToMove;
 
                     if(chainPosition > position){
-                        chainsToMove = (72-chainPosition) + position;
+                        chainsToMove = (71-chainPosition) + position;
                         
                     }else if(position = chainPosition){
                         chainsToMove = 0;
@@ -98,7 +97,7 @@ namespace pros {
                         chainsToMove = position-chainPosition;
                    }
 
-                   iIntaker.move_relative(22.5*chainsToMove, 100);
+                   iIntaker.move_relative(22.5*chainsToMove, 200);
                    if(chainsToMove +chainPosition > 71){
                     chainPosition = (chainPosition + chainsToMove) -71;
                    }else{

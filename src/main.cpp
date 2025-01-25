@@ -308,7 +308,7 @@ void opcontrol() {
 
 		if(master.get_digital(DIGITAL_B)){
 	
-			if(intake.getIntakeState().at(0)){
+			if((intake.getIntakeState().at(0)) = 0){
 				intake.runContinous(400, intaker);
 			}else{
 				intake.stopRunning();
@@ -340,7 +340,7 @@ void opcontrol() {
 
 		if(master.get_digital_new_press(DIGITAL_X)){
 			if(!flexRun){
-				flex.move_velocity(400);
+				flex.move_velocity(600);
 				flexRun = true;
 			}else{
 				flex.brake();
