@@ -52,7 +52,7 @@ double averageMotorVoltage(pros::MotorGroup& motors){
  * When called it calculates how far the wheels must turn to drive the robot however far the call is, 
  *it then waits until the motors stop turning to break
  */
-void drive (double distance, double speed ) { 
+int drive (double distance, double speed ) { 
 
 		double efficiency_modifier = 1.;
 
@@ -75,7 +75,31 @@ void drive (double distance, double speed ) {
 			break;
 		}
 	}
+	return 0;
 }
+
+int runContinousLoop(double param, pros::Motor param2){
+    while(true){
+
+        if(intake.getIntakeState().at(0)=  1){
+                while((intake.getIntakeState().at(0) =  1)){
+                        param2.move_relative(1080, param);
+                            if(intake.getChainPosition()<72){
+                               intake.setChainPosition(intake.getChainPosition()+24);
+                                        
+                            }else{
+                                intake.setChainPosition(0);
+                            }
+                            pros::delay(1000);
+                            }
+                                
+                        param2.brake();
+                        }
+
+                        pros::delay(3);
+                    }
+                    return 0;
+                }
 
 /**
  * A function that turns the robot, double degrees, double speed, and in a direction of your choosing
@@ -212,12 +236,17 @@ void on_right_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+
+
+void startTask(){
+    pros::Task intakeLoop(runContinousLoop(200, intaker), "intakeLoop");
+}
 void initialize() {
 	pros::lcd::initialize();
 	wallScore.set_brake_mode(MOTOR_BRAKE_HOLD);
     intaker.set_voltage_limit(5500);
 	pros::lcd::register_btn1_cb(on_center_button);
-	pros::Task intakeLoop(intake.runContinousLoop());
+	startTask();
 }
 
 /**

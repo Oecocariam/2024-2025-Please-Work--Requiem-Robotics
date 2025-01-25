@@ -62,13 +62,16 @@ namespace pros {
                 int getChainPosition(){
                     return chainPosition;
                 }
+                void setChainPosition(int iChainposition){
+                    chainPosition= iChainposition;
+                }
 
-                void runContinousLoop(int velocity,  pros::Motor iIntaker){
+                int runContinousLoop(double param, pros::Motor param2){
                     while(true){
 
                         if(intakeState.at(0)=  1){
                             while((intakeState.at(0) =  1)){
-                                iIntaker.move_relative(1080, velocity);
+                                param2.move_relative(1080, param);
                                  if(chainPosition<72){
                                     chainPosition += 24;
                                         
@@ -78,11 +81,12 @@ namespace pros {
                                 pros::delay(1000);
                                 }
                                 
-                            iIntaker.brake();
+                            param2.brake();
                         }
 
                         pros::delay(3);
                     }
+                    return 0;
                 }
 
                 void runContinous(){
